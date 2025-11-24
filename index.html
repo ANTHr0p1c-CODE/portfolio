@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Portfolio Cybersecurity di Anthony Candeloro">
+    
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://fonts.googleapis.com; font-src 'self' https://cdnjs.cloudflare.com https://fonts.gstatic.com; img-src 'self' data: https: https://tryhackme-badges.s3.amazonaws.com; connect-src 'self' https://formspree.io https://api.allorigins.win;">
+    
+    <title>Anthony Candeloro | CyberSec Student</title>
+    <link rel="icon" type="image/png" href="favicon.png">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        /* --- CONFIGURAZIONE COLORI (DEFAULT: AMBER) --- */
+        :root {
+            --bg-color: #0d0d0d;
+            --panel-bg: #141414;
+            --text-main: #e0e0e0;
+            --text-muted: #858585;
+            --accent: #ffb000;          /* Ambra */
+            --accent-dim: rgba(255, 176, 0, 0.2);
+            --border: #333333;
+            --glitch-color: #ff3c00;
+        }
+
+        /* TEMA RED TEAM (Attacco) */
+        [data-theme="red"] {
+            --accent: #ff003c; /* Rosso Cyberpunk */
+            --accent-dim: rgba(255, 0, 60, 0.2);
+            --glitch-color: #00ffea;
+        }
+
+        /* TEMA BLUE TEAM (Difesa) */
+        [data-theme="blue"] {
+            --accent: #00e5ff; /* Ciano Elettrico */
+            --accent-dim: rgba(0, 229, 255, 0.2);
+            --glitch-color: #ff00ff;
+        }
+
+        /* --- BASE --- */
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        html { scroll-behavior: smooth; font-size: 16px; }
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: 'IBM Plex Mono', monospace;
+            line-height: 1.6;
+            overflow-x: hidden;
+            padding-bottom: 60px;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        /* --- SFONDO SCANLINE --- */
+        body::after {
+            content: " ";
+            display: block;
+            position: fixed;
+            top: 0; left: 0; bottom: 0; right: 0;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255,0,0,0.06), rgba(0,255,0,0.02), rgba(0,0,255,0.06));
+            z-index: 2;
+            background-size: 100% 2px, 3px 100%;
+            pointer-events: none;
+        }
+
+        /* --- TYPOGRAPHY --- */
+        h1, h2, h3 { text-transform: uppercase; letter-spacing: -1px; }
+        h1 { font-size: 2.5rem; color: var(--text-main); margin-bottom: 0.5rem; margin-top: 0.5rem; position: relative; display: inline-block;}
+        
+        .typing-cursor::after {
+            content: '█';
+            animation: blink 1s step-end infinite;
+            color: var(--accent);
+            margin-left: 5px;
+        }
+        @keyframes blink { 50% { opacity: 0; } }
+
+        h2 { 
+            font-size: 1.5rem; color: var(--accent); border-bottom: 1px solid var(--border); 
+            padding-bottom: 10px; margin-bottom: 30px; margin-top: 60px;
+            display: flex; align-items: center; gap: 10px;
+        }
+        h2::before { content: ">>"; color: var(--text-muted); font-size: 1rem; }
+
+        a { color: var(--accent); text-decoration: none; transition: 0.3s; }
+        a:hover { text-shadow: 0 0 8px var(--accent); }
+        p { margin-bottom: 1rem; color: var(--text-muted); }
+        strong { color: var(--text-main); font-weight: 600; }
+
+        /* --- HEADER --- */
+        header {
+            border-bottom: 1px solid var(--border); padding: 20px 0; position: sticky; top: 0;
+            background: rgba(13, 13, 13, 0.95); z-index: 1000; backdrop-filter: blur(5px);
+        }
+        .container { max-width: 1000px; margin: 0 auto; padding: 0 20px; }
+        .nav-flex { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; }
+        
+        .logo { font-weight: bold; border: 1px solid var(--accent); padding: 5px 10px; color: var(--accent); transition: 0.2s; cursor: default;}
+        .logo:hover { background: var(--accent); color: #000; box-shadow: 3px 3px 0px var(--glitch-color); }
+
+        nav ul { list-style: none; display: flex; gap: 20px; align-items: center; flex-wrap: wrap; justify-content: center; }
+        nav a { font-size: 0.9rem; color: var(--text-main); white-space: nowrap; }
+        nav a:hover { color: var(--accent); }
+
+        /* Theme Switcher Button Style */
+        .theme-btn {
+            background: transparent; border: 1px solid var(--border); color: var(--text-muted);
+            padding: 4px 10px; font-size: 0.8rem; cursor: pointer; font-family: inherit; margin-left: 10px;
+            transition: 0.3s; white-space: nowrap;
+        }
+        .theme-btn:hover { border-color: var(--accent); color: var(--accent); box-shadow: 0 0 8px var(--accent-dim); }
+
+        /* --- HERO CENTERED --- */
+        .hero { padding: 80px 0; border-bottom: 1px solid var(--border); text-align: center; }
+        .status-container { display: block; margin-bottom: 15px; }
+        .hero-status { 
+            font-size: 0.8rem; color: #4caf50; 
+            display: inline-block; border: 1px solid #4caf50; padding: 2px 8px; background: rgba(76, 175, 80, 0.1);
+        }
+        .hero-subtitle { font-size: 1.2rem; color: var(--text-muted); margin-bottom: 20px; }
+        
+        .social-icons { display: flex; gap: 15px; margin-top: 25px; font-size: 1.5rem; justify-content: center; flex-wrap: wrap; }
+        .social-icons a { 
+            color: var(--text-muted); border: 1px solid var(--border); width: 45px; height: 45px; 
+            display: flex; align-items: center; justify-content: center; border-radius: 4px; transition: 0.3s;
+        }
+        .social-icons a:hover { color: var(--bg-color); background: var(--accent); transform: translateY(-3px); }
+
+        /* --- SKILLS GRID --- */
+        .skill-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
+        .skill-box { 
+            background: var(--panel-bg); border: 1px solid var(--border); padding: 25px; 
+            transition: 0.3s; position: relative; height: 100%;
+        }
+        .skill-box:hover { border-color: var(--accent); transform: translateY(-2px); box-shadow: 0 5px 15px rgba(0,0,0,0.3); }
+        .skill-item { margin-bottom: 12px; }
+        .skill-label { display: flex; justify-content: space-between; font-size: 0.80rem; margin-bottom: 3px; color: var(--text-main); }
+        .skill-progress-bg { width: 100%; height: 6px; background: #000; border: 1px solid var(--border); }
+        .skill-progress-fill { height: 100%; background: var(--accent); width: 0; transition: width 1s ease-out; }
+
+        /* --- CERTIFICATIONS & BADGES MIXED --- */
+        .cert-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; }
+        
+        .cert-box { 
+            border: 1px dashed var(--border); padding: 15px; 
+            display: flex; align-items: center; gap: 15px; background: var(--panel-bg);
+        }
+        .cert-box i { font-size: 1.5rem; color: var(--text-muted); }
+        .cert-title { font-weight: bold; color: var(--text-main); }
+        .cert-status { font-size: 0.8rem; color: var(--accent); text-transform: uppercase; }
+
+        /* Badge Box Style */
+        .badge-box {
+            border: 1px solid var(--border); background: var(--panel-bg);
+            padding: 15px; display: flex; flex-direction: column; align-items: center; justify-content: center;
+            transition: 0.3s;
+        }
+        .badge-box:hover { border-color: var(--accent); box-shadow: 0 0 10px var(--accent-dim); }
+        .badge-img { max-width: 100%; height: auto; max-height: 80px; filter: drop-shadow(0 0 2px var(--accent-dim)); }
+        .badge-link { font-size: 0.8rem; margin-top: 10px; color: var(--text-muted); text-decoration: none; }
+        .badge-link:hover { color: var(--accent); text-decoration: underline; }
+
+        /* --- PROGETTI --- */
+        .projects-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 25px; }
+        .project-card {
+            background: var(--panel-bg); border: 1px solid var(--border); display: flex; flex-direction: column;
+            transition: all 0.3s ease; position: relative; overflow: hidden;
+        }
+        .project-card:hover { border-color: var(--accent); transform: translateY(-5px); box-shadow: 0 5px 15px rgba(0,0,0,0.5); }
+        .card-header { background: var(--border); padding: 5px 10px; font-size: 0.7rem; color: #fff; display: flex; justify-content: space-between; }
+        .card-body { padding: 20px; flex-grow: 1; display: flex; flex-direction: column; }
+        .card-title { font-size: 1.1rem; color: #fff; margin-bottom: 10px; }
+        .card-tags { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 15px; }
+        .tag { font-size: 0.75rem; background: #000; color: var(--accent); padding: 3px 6px; border: 1px solid var(--border); }
+        .card-actions { padding: 15px 20px; border-top: 1px solid var(--border); display: flex; gap: 10px; }
+
+        /* --- WRITEUPS SECTION --- */
+        .writeup-list { 
+            background: var(--panel-bg); border: 1px solid var(--border);
+            font-family: 'IBM Plex Mono', monospace; 
+        }
+        .writeup-row {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 12px 15px; border-bottom: 1px solid var(--border); cursor: pointer;
+            transition: 0.2s;
+        }
+        .writeup-row:last-child { border-bottom: none; }
+        .writeup-row:hover { background: rgba(255, 255, 255, 0.05); color: var(--accent); padding-left: 20px; }
+        .w-perm { color: var(--text-muted); font-size: 0.8rem; margin-right: 15px; min-width: 80px;}
+        .w-name { flex-grow: 1; font-weight: bold; }
+        .w-date { font-size: 0.8rem; color: var(--text-muted); }
+
+        /* --- BOTTONI & FORM --- */
+        .btn { 
+            display: inline-block; padding: 8px 16px; font-size: 0.85rem; font-weight: bold; cursor: pointer;
+            border: 1px solid var(--accent); color: var(--accent); background: transparent; transition: 0.2s;
+        }
+        .btn:hover { background: var(--accent); color: var(--bg-color); box-shadow: 0 0 10px var(--accent); }
+        .btn-sm { padding: 5px 10px; font-size: 0.8rem; }
+        .btn-outline { border-color: var(--text-muted); color: var(--text-muted); }
+        .btn-outline:hover { background: var(--text-muted); color: var(--bg-color); box-shadow: none; }
+
+        form { display: grid; gap: 15px; max-width: 600px; margin: 0 auto; }
+        input, textarea {
+            width: 100%; background: #080808; border: 1px solid var(--border); color: #fff;
+            padding: 12px; font-family: inherit; font-size: 1rem; transition: 0.3s;
+        }
+        input:focus, textarea:focus { outline: none; border-color: var(--accent); background: #111; }
+
+        /* --- STATUS BAR --- */
+        .status-bar {
+            position: fixed; bottom: 0; left: 0; width: 100%;
+            background: var(--accent); color: #000;
+            padding: 5px 20px; font-size: 0.8rem; font-weight: bold;
+            display: flex; justify-content: space-between; align-items: center;
+            z-index: 2000; border-top: 2px solid #000;
+        }
+
+        /* --- MODAL --- */
+        .modal {
+            display: none; position: fixed; z-index: 3000; left: 0; top: 0; width: 100%; height: 100%;
+            background-color: rgba(0,0,0,0.9); backdrop-filter: blur(4px);
+        }
+        .modal-window {
+            background-color: var(--bg-color); margin: 5% auto; padding: 0; border: 1px solid var(--accent);
+            width: 90%; max-width: 700px; position: relative; box-shadow: 0 0 30px rgba(255, 176, 0, 0.2);
+            animation: slideIn 0.3s ease-out; max-height: 90vh; display: flex; flex-direction: column;
+        }
+        @keyframes slideIn { from {transform: translateY(-20px); opacity: 0;} to {transform: translateY(0); opacity: 1;} }
+        .modal-bar { background: var(--accent); color: #000; padding: 8px 15px; font-weight: bold; display: flex; justify-content: space-between; }
+        .close-modal { cursor: pointer; font-weight: bold; padding: 0 5px; }
+        .close-modal:hover { background: #000; color: var(--accent); }
+        .modal-content-inner { padding: 30px; overflow-y: auto; flex-grow: 1; }
+        .modal-content-inner p { margin-bottom: 15px; color: #ccc; }
+        .modal-content-inner h4 { color: var(--accent); margin-top: 20px; margin-bottom: 10px; border-bottom: 1px solid var(--border); display: inline-block; }
+        .modal-content-inner ul { margin-left: 20px; margin-bottom: 15px; color: #ccc; }
+
+        footer { margin-top: 80px; padding: 40px 0; border-top: 1px solid var(--border); text-align: center; font-size: 0.85rem; }
+
+        /* --- RESPONSIVE MEDIA QUERIES --- */
+        @media (max-width: 768px) {
+            .nav-flex { flex-direction: column; align-items: center; gap: 15px; }
+            h1 { font-size: 1.8rem; }
+            .status-bar { display: none; } /* Nascondi status bar su mobile */
+            body { padding-bottom: 0; }
+            .hero { padding: 60px 0; }
+            .modal-window { width: 95%; margin: 10% auto; max-height: 85vh; }
+            .writeup-row { font-size: 0.8rem; }
+            .w-perm { display: none; } /* Nascondi permessi su mobile */
+        }
+    </style>
+</head>
+<body data-theme="amber">
+
+    <header>
+        <div class="container nav-flex">
+            <div class="logo" data-status="Torna alla Home">./ANTHONY_CANDELORO</div>
+            <nav>
+                <ul>
+                    <li><a href="#about" data-status="Profilo">~/about</a></li>
+                    <li><a href="#skills" data-status="Competenze">~/skills</a></li>
+                    <li><a href="#certs" data-status="Certificazioni">~/certificazioni</a></li>
+                    <li><a href="#projects" data-status="Progetti">~/progetti</a></li>
+                    <li><a href="#writeups" data-status="Writeups">~/writeups</a></li>
+                    <li><a href="#contact" data-status="Contattami">~/contatti</a></li>
+                    <li><button class="theme-btn" onclick="toggleTheme()" data-status="Cambia Colore">[COLOR_MODE]</button></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <section class="hero">
+        <div class="container">
+            <div class="status-container">
+                <span class="hero-status">● SYSTEM STATUS: ONLINE</span>
+            </div>
+            
+            <h1>
+                <span id="typewriter"></span><span class="typing-cursor"></span>
+            </h1>
+            
+            <div style="max-width: 700px; margin: 0 auto 2rem auto;">
+                <p>Cybersecurity Student.</p>
+            </div>
+            
+            <div class="social-icons">
+                <a href="https://www.linkedin.com/in/anthony-candeloro-869126379/" target="_blank" data-status="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+                <a href="https://github.com/ANTHr0p1c-CODE" target="_blank" data-status="GitHub"><i class="fab fa-github"></i></a>
+                <a href="mailto:candeloroanthony@protonmail.com" data-status="Email"><i class="fas fa-envelope"></i></a>
+            </div>
+        </div>
+    </section>
+
+    <div class="container">
+        
+        <section id="about">
+            <h2>01_CHI_SONO.txt</h2>
+            <p>
+                Sono una persona solare e positiva. Non provengo da un percorso informatico standard, ma ho sviluppato 
+                una vera <strong>ossessione per l'apprendimento</strong>.
+            </p>
+            <p>
+                Quando mi pongo un obiettivo, dedico ogni energia per raggiungerlo. 
+                Sto studiando duramente per trasformare questa passione in una professione concreta, 
+                con l'umiltà di chi sa di avere ancora molto da imparare ma la determinazione di chi non molla mai.
+            </p>
+        </section>
+
+        <section id="skills">
+            <h2>02_COMPETENZE.exe</h2>
+            <div class="skill-grid">
+                
+                <div class="skill-box" data-status="Offensive Tools">
+                    <h3><i class="fas fa-skull"></i> Offensive Ops</h3>
+                    <div style="margin-top: 20px;">
+                        <div class="skill-item">
+                            <div class="skill-label"><span>Google Dorking</span><span>60%</span></div>
+                            <div class="skill-progress-bg"><div class="skill-progress-fill" style="width: 60%"></div></div>
+                        </div>
+                        <div class="skill-item">
+                            <div class="skill-label"><span>Metasploit Framework</span><span>40%</span></div>
+                            <div class="skill-progress-bg"><div class="skill-progress-fill" style="width: 40%"></div></div>
+                        </div>
+                        <div class="skill-item">
+                            <div class="skill-label"><span>Hydra / Medusa</span><span>60%</span></div>
+                            <div class="skill-progress-bg"><div class="skill-progress-fill" style="width: 60%"></div></div>
+                        </div>
+                        <div class="skill-item">
+                            <div class="skill-label"><span>Mimikatz</span><span>30%</span></div>
+                            <div class="skill-progress-bg"><div class="skill-progress-fill" style="width: 30%"></div></div>
+                        </div>
+                        <div class="skill-item">
+                            <div class="skill-label"><span>Nmap</span><span>45%</span></div>
+                            <div class="skill-progress-bg"><div class="skill-progress-fill" style="width: 45%"></div></div>
+                        </div>
+                        <div class="skill-item">
+                            <div class="skill-label"><span>Nikto</span><span>30%</span></div>
+                            <div class="skill-progress-bg"><div class="skill-progress-fill" style="width: 30%"></div></div>
+                        </div>
+                         <div class="skill-item">
+                            <div class="skill-label"><span>Nessus / OpenVAS</span><span>35%</span></div>
+                            <div class="skill-progress-bg"><div class="skill-progress-fill" style="width: 35%"></div></div>
+                        </div>
+                        <div class="skill-item">
+                            <div class="skill-label"><span>C2 Frameworks</span><span>30%</span></div>
+                            <div class="skill-progress-bg"><div class="skill-progress-fill" style="width: 30%"></div></div>
+                        </div>
+                        <div class="skill-item">
+                            <div class="skill-label"><span>OWASP ZAP</span><span>45%</span></div>
+                            <div class="skill-progress-bg"><div class="skill-progress-fill" style="width: 45%"></div></div>
+                        </div>
+                         <div class="skill-item">
+                            <div class="skill-label"><span>WPScan</span><span>35%</span></div>
+                            <div class="skill-progress-bg"><div class="skill-progress-fill" style="width: 35%"></div></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="skill-box" data-status="Systems Admin">
+                    <h3><i class="fas fa-server"></i> Systems & Net</h3>
+                    <div style="margin-top: 20px;">
+                        <div class="skill-item">
+                            <div class="skill-label"><span>VirtualBox / VMware</span><span>85%</span></div>
+                            <div class="skill-progress-bg"><div class="skill-progress-fill" style="width: 85%"></div></div>
+                        </div>
+                         <div class="skill-item">
+                            <div class="skill-label"><span>Windows OS</span><span>75%</span></div>
+                            <div class="skill-progress-bg"><div class="skill-progress-fill" style="width: 75%"></div></div>
+                        </div>
+                        <div class="skill-item">
+                            <div class="skill-label"><span>Windows Server / AD</span><span>45%</span></div>
+                            <div class="skill-progress-bg"><div class="skill-progress-fill" style="width: 45%"></div></div>
+                        </div>
+                        <div class="skill-item">
+                            <div class="skill-label"><span>AWS Cloud</span><span>40%</span></div>
+                            <div class="skill-progress-bg"><div class="skill-progress-fill" style="width: 40%"></div></div>
+                        </div>
+                        <div class="skill-item">
+                            <div class="skill-label"><span>Linux</span><span>65%</span></div>
+                            <div class="skill-progress-bg"><div class="skill-progress-fill" style="width: 65%"></div></div>
+                        </div>
+                        <div class="skill-item">
+                            <div class="skill-label"><span>Wireshark</span><span>30%</span></div>
+                            <div class="skill-progress-bg"><div class="skill-progress-fill" style="width: 30%"></div></div>
+                        </div>
+                         <div class="skill-item">
+                            <div class="skill-label"><span>Networking</span><span>30%</span></div>
+                            <div class="skill-progress-bg"><div class="skill-progress-fill" style="width: 30%"></div></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="skill-box" data-status="Dev & Creative">
+                    <h3><i class="fas fa-code"></i> Dev & Creative</h3>
+                    <div style="margin-top: 20px;">
+                        <div class="skill-item">
+                            <div class="skill-label"><span>HTML5 / CSS3</span><span>90%</span></div>
+                            <div class="skill-progress-bg"><div class="skill-progress-fill" style="width: 90%"></div></div>
+                        </div>
+                        <div class="skill-item">
+                            <div class="skill-label"><span>Python</span><span>10%</span></div>
+                            <div class="skill-progress-bg"><div class="skill-progress-fill" style="width: 10%"></div></div>
+                        </div>
+                        <div class="skill-item">
+                            <div class="skill-label"><span>WordPress</span><span>65%</span></div>
+                            <div class="skill-progress-bg"><div class="skill-progress-fill" style="width: 65%"></div></div>
+                        </div>
+                         <div class="skill-item">
+                            <div class="skill-label"><span>PHP</span><span>10%</span></div>
+                            <div class="skill-progress-bg"><div class="skill-progress-fill" style="width: 10%"></div></div>
+                        </div>
+                        <div class="skill-item">
+                            <div class="skill-label"><span>MySQL</span><span>30%</span></div>
+                            <div class="skill-progress-bg"><div class="skill-progress-fill" style="width: 30%"></div></div>
+                        </div>
+                        <div class="skill-item">
+                            <div class="skill-label"><span>Photoshop / Premiere</span><span>55%</span></div>
+                            <div class="skill-progress-bg"><div class="skill-progress-fill" style="width: 55%"></div></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="certs">
+            <h2>03_CERTIFICAZIONI_&_RANK.log</h2>
+            <div class="cert-container">
+                
+                <div class="cert-box">
+                    <i class="fas fa-spinner fa-spin"></i>
+                    <div>
+                        <div class="cert-title">eJPT Certified</div>
+                        <div class="cert-status">In Preparazione</div>
+                    </div>
+                </div>
+                
+                <div class="cert-box">
+                    <i class="fas fa-bullseye"></i>
+                    <div>
+                        <div class="cert-title">CEH Master</div>
+                        <div class="cert-status">Obiettivo Futuro</div>
+                    </div>
+                </div>
+
+                <div class="badge-box">
+                    <img src="https://tryhackme-badges.s3.amazonaws.com/candhony.png" alt="THM Badge" class="badge-img">
+                    <a href="https://tryhackme.com/p/candhony" target="_blank" class="badge-link">View THM Profile</a>
+                </div>
+
+            </div>
+        </section>
+
+        <section id="projects">
+            <h2>04_LISTA_PROGETTI.sh</h2>
+            <div class="projects-grid" id="projects-container">
+                </div>
+        </section>
+
+        <section id="writeups">
+            <h2>05_WRITEUPS.txt</h2>
+            <p style="margin-bottom: 20px;">Analisi tecnica del Portfolio e soluzioni CTF.</p>
+            <div class="writeup-list" id="writeups-container">
+                </div>
+        </section>
+
+        <section id="contact">
+            <h2>06_INVIA_MESSAGGIO.msg</h2>
+            <form action="https://formspree.io/f/mgvkpeep" method="POST">
+                <input type="text" name="name" placeholder="Nome / Azienda" required data-status="Inserimento Nome">
+                <input type="email" name="email" placeholder="Email di contatto" required data-status="Inserimento Email">
+                <textarea name="message" rows="5" placeholder="Messaggio..." required data-status="Inserimento Messaggio"></textarea>
+                <button type="submit" class="btn" data-status="Esegui Invio">INVIA DATI</button>
+            </form>
+        </section>
+
+    </div>
+
+    <footer>
+        <div class="container">
+            <p>&copy; <span id="year"></span> Anthony Candeloro.</p>
+        </div>
+    </footer>
+
+    <div class="status-bar">
+        <div style="display:flex; gap:20px;">
+            <span>STATUS: ONLINE</span>
+            <span id="dynamic-status" style="color:#000;">IDLE</span>
+        </div>
+        <div>SEC_LEVEL: LOW</div>
+    </div>
+
+    <div id="project-modal" class="modal">
+        <div class="modal-window">
+            <div class="modal-bar">
+                <span id="modal-title">INFO.txt</span>
+                <span class="close-modal" onclick="closeMyModal()">[CHIUDI X]</span>
+            </div>
+            <div class="modal-content-inner">
+                <div id="modal-body"></div>
+                <div id="modal-tags" style="margin: 20px 0; display:flex; gap:10px; flex-wrap:wrap;"></div>
+                <a href="#" id="modal-link" class="btn" target="_blank">VEDI SORGENTE</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- 1. CONFIGURAZIONE PROGETTI ---
+        const myProjects = [
+            {
+                id: "cloud_firewall",
+                title: "AWS Cloud Firewall",
+                description: "Hardening VPS Linux su AWS, iptables e SSH.",
+                fullDescription: `
+                    <h4>Contesto</h4>
+                    <p>Progetto finale del primo anno. Obiettivo: messa in sicurezza (Hardening) di un sistema esposto.</p>
+                    
+                    <h4>Implementazione Tecnica</h4>
+                    <p>Ho scelto di utilizzare una <strong>VPS EC2 su Amazon Web Services (AWS)</strong> per simulare uno scenario reale.</p>
+                    <ul>
+                        <li>Configurazione regole di filtraggio pacchetti con <strong>iptables</strong> (politica default DROP).</li>
+                        <li>Configurazione Security Groups di AWS.</li>
+                        <li>Hardening del servizio SSH (No Root Login, Key Auth).</li>
+                        <li>Test di penetrazione perimetrale con Nmap per verificare le regole.</li>
+                    </ul>
+                `,
+                tags: ["AWS", "Linux", "iptables", "SSH Hardening", "Nmap"],
+                githubLink: null, 
+                statusMsg: "Dettagli Cloud Firewall"
+            },
+            {
+                id: "portfolio",
+                title: "Portfolio CyberSec",
+                description: "Sito Statico. Analisi sicurezza Client-Side.",
+                fullDescription: `
+                    <h4>Descrizione Tecnica</h4>
+                    <p>Questo portfolio è un sito statico (HTML/CSS/JS) senza database o backend proprietario.</p>
+                    
+                    <h4>Analisi Sicurezza & Superficie d'Attacco</h4>
+                    <p>Essendo un sito statico, la superficie d'attacco è ridotta. Le principali minacce considerate sono:</p>
+                    <ul>
+                        <li><strong>Vulnerabilità Client-Side (XSS):</strong> Poiché non c'è input utente salvato su DB (Persistent XSS) né riflesso immediatamente dal server (Reflected XSS standard), il rischio è basso ma gestito tramite policy.</li>
+                        <li><strong>Mitigazione:</strong> Implementazione di header <strong>Content Security Policy (CSP)</strong> rigorosi per impedire l'esecuzione di script non autorizzati.</li>
+                        <li><strong>Gestione Form:</strong> I dati vengono inviati tramite Formspree (servizio esterno), eliminando rischi di SQL Injection sul mio dominio.</li>
+                    </ul>
+                `,
+                tags: ["Static Site", "CSP Headers", "Risk Analysis", "No-Backend"],
+                githubLink: "https://github.com/candhony/portfolio",
+                statusMsg: "Dettagli Portfolio"
+            }
+        ];
+
+        // --- 2. DATI WRITEUPS (SOLO PORTFOLIO) ---
+        const myWriteups = [
+            {
+                id: "portfolio_build",
+                title: "Portfolio CyberSec: Architecture Breakdown",
+                date: "2025-11-01", // DATA AGGIORNATA
+                description: "Analisi passo passo della costruzione del sito: CSP, Variabili CSS e No-Framework.",
+                fullDescription: `
+                    <h4>1. Architettura "No-Framework"</h4>
+                    <p>La scelta di non utilizzare Bootstrap, Tailwind o React è intenzionale. Riduce il "bloat" (codice inutile), migliora le performance di caricamento e riduce la superficie di attacco eliminando dipendenze di terze parti potenzialmente vulnerabili.</p>
+                    
+                    <h4>2. Gestione del Tema (CSS Variables)</h4>
+                    <p>Il sistema di colori (Ambra, Rosso, Blu) è gestito tramite variabili CSS native (<code>:root</code>). Il JavaScript cambia semplicemente un attributo <code>data-theme</code> sul body, e il CSS ricalcola i colori istantaneamente senza ricaricare la pagina.</p>
+                    
+                    <h4>3. Sicurezza (CSP Headers)</h4>
+                    <p>Nel tag <code>&lt;meta&gt;</code> è implementata una Content Security Policy rigorosa che whitelista solo le risorse necessarie (Font Awesome, Google Fonts, Formspree, Badge di TryHackMe). Questo blocca l'esecuzione di script malevoli iniettati (XSS Mitigation).</p>
+                `,
+                tags: ["WebSec", "HTML5", "CSS3", "CSP"],
+                link: "#"
+            }
+        ];
+
+        // --- 3. GENERAZIONE CONTENUTI ---
+        const projContainer = document.getElementById('projects-container');
+        const writeupContainer = document.getElementById('writeups-container');
+        
+        function renderContent() {
+            // Render Progetti
+            projContainer.innerHTML = '';
+            myProjects.forEach(proj => {
+                let tagsHtml = proj.tags.map(tag => `<span class="tag">${tag}</span>`).join('');
+                projContainer.innerHTML += `
+                    <div class="project-card" data-status="${proj.statusMsg}">
+                        <div class="card-header">
+                            <span>user@anthony:~/projects/${proj.id}</span>
+                            <span>[R-X]</span>
+                        </div>
+                        <div class="card-body">
+                            <h3 class="card-title">${proj.title}</h3>
+                            <p class="card-desc" style="color:#aaa; font-size:0.9rem; flex-grow:1;">${proj.description}</p>
+                            <div class="card-tags">${tagsHtml}</div>
+                        </div>
+                        <div class="card-actions">
+                            <button class="btn btn-sm" onclick="openMyModal('project', '${proj.id}')">INFO</button>
+                            ${proj.githubLink ? `<a href="${proj.githubLink}" target="_blank" class="btn btn-sm btn-outline"><i class="fab fa-github"></i> CODE</a>` : ''}
+                        </div>
+                    </div>
+                `;
+            });
+
+            // Render Writeups
+            writeupContainer.innerHTML = '';
+            myWriteups.forEach(wu => {
+                writeupContainer.innerHTML += `
+                    <div class="writeup-row" onclick="openMyModal('writeup', '${wu.id}')" data-status="Leggi Writeup">
+                        <div style="display:flex; align-items:center;">
+                            <span class="w-perm">-rw-r--r--</span>
+                            <span class="w-name">${wu.title}</span>
+                        </div>
+                        <span class="w-date">${wu.date}</span>
+                    </div>
+                `;
+            });
+        }
+
+        // --- 4. MODAL LOGIC ---
+        const modal = document.getElementById('project-modal');
+        const modalTitle = document.getElementById('modal-title');
+        const modalBody = document.getElementById('modal-body');
+        const modalTags = document.getElementById('modal-tags');
+        const modalLink = document.getElementById('modal-link');
+
+        window.openMyModal = function(type, id) {
+            let data;
+            if (type === 'project') data = myProjects.find(p => p.id === id);
+            else if (type === 'writeup') data = myWriteups.find(w => w.id === id);
+
+            if(!data) return;
+
+            modalTitle.textContent = data.title + ".txt";
+            modalBody.innerHTML = data.fullDescription;
+            modalTags.innerHTML = data.tags.map(tag => `<span class="tag" style="border-color:#555">${tag}</span>`).join('');
+            
+            if(data.githubLink || (data.link && data.link !== '#')) {
+                modalLink.style.display = "inline-block";
+                modalLink.href = data.githubLink || data.link;
+                modalLink.textContent = "VEDI RISORSA";
+            } else {
+                modalLink.style.display = "none";
+            }
+            
+            modal.style.display = "block";
+        };
+
+        window.closeMyModal = function() { modal.style.display = "none"; };
+        window.onclick = function(e) { if (e.target == modal) modal.style.display = "none"; };
+
+        // --- 5. UTILS ---
+        const textToType = "Anthony Candeloro";
+        const typeContainer = document.getElementById('typewriter');
+        let typeIndex = 0;
+
+        function typeWriter() {
+            if (typeIndex < textToType.length) {
+                typeContainer.innerHTML += textToType.charAt(typeIndex);
+                typeIndex++;
+                setTimeout(typeWriter, 100);
+            }
+        }
+        setTimeout(typeWriter, 500);
+
+        const statusDisplay = document.getElementById('dynamic-status');
+        document.body.addEventListener('mouseover', function(e) {
+            let target = e.target.closest('[data-status]');
+            if (target) statusDisplay.textContent = target.getAttribute('data-status').toUpperCase();
+            else statusDisplay.textContent = "IDLE";
+        });
+
+        // Theme Switcher
+        const themes = ['amber', 'red', 'blue'];
+        let currentTheme = 0;
+        function toggleTheme() {
+            currentTheme = (currentTheme + 1) % themes.length;
+            const newTheme = themes[currentTheme];
+            if(newTheme === 'amber') document.body.removeAttribute('data-theme');
+            else document.body.setAttribute('data-theme', newTheme);
+        }
+
+        // INIT
+        renderContent();
+        document.getElementById('year').textContent = new Date().getFullYear();
+
+    </script>
+</body>
+</html>
